@@ -12,6 +12,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainWindow {
     private static Stage window;
@@ -40,12 +42,26 @@ public class MainWindow {
         save.setOnMouseExited(e -> {
             save.setStyle("-fx-graphic: url(save-file.png);-fx-background-color: transparent;");
         });
+
         top_1.getChildren().add(save);
 
         top.getChildren().addAll(top_1, top_2);
 
         Spreadsheet spreadsheet = new Spreadsheet("Test", formulaViewer);
         window.setTitle(spreadsheet.getName());
+
+        Button addRowButton = new Button("Add Row");
+        addRowButton.setOnMouseClicked(e -> {
+            addRow(spreadsheet, table);
+        });
+
+        Button deleteRowButton = new Button("Delete row");
+        deleteRowButton.setOnMouseClicked(e -> {
+            if(spreadsheet.getHeight() > 1)
+                deleteRow(spreadsheet, table);
+        });
+
+        top_1.getChildren().addAll(addRowButton, deleteRowButton);
 
         drawCells(spreadsheet, table);
 
@@ -58,22 +74,55 @@ public class MainWindow {
         window.show();
     }
 
-    public static void drawCells(Spreadsheet spreadsheet, VBox layout){
-        Cell[][] cells = spreadsheet.getCells();
+    public static void addRow(Spreadsheet spreadsheet, VBox layout){
+        List<List<Cell>> cells = spreadsheet.getCells();
 
-        for(int i = -1; i < 10; i++){
+        List<Cell> newRow = new ArrayList<>();
+        for(int i = 0; i < spreadsheet.getWidth(); i++){
+            newRow.add(new Cell(new TextField(), spreadsheet));
+        }
+
+        cells.add(newRow);
+        layout.getChildren().clear();
+        spreadsheet.setHeight(spreadsheet.getHeight() + 1);
+        drawCells(spreadsheet, layout);
+    }
+
+    public static void addColumn(Spreadsheet spreadsheet, VBox layout){
+    }
+
+    public static void deleteRow(Spreadsheet spreadsheet, VBox layout){
+        List<List<Cell>> cells = spreadsheet.getCells();
+
+
+        layout.getChildren().clear();
+        cells.remove(cells.size() - 1);
+        spreadsheet.setHeight(spreadsheet.getHeight() - 1);
+        drawCells(spreadsheet, layout);
+    }
+
+    public static void deleteColumn(Spreadsheet spreadsheet){
+
+    }
+
+    public static void drawCells(Spreadsheet spreadsheet, VBox layout){
+        List<List<Cell>> cells = spreadsheet.getCells();
+
+        for(int i = -1; i < spreadsheet.getHeight(); i++){
             HBox row = new HBox();
             if(i > -1){
                 Label label = new Label((i + 1) + "");
                 label.setStyle("-fx-pref-width: 20px;-fx-alignment: center;");
                 row.getChildren().add(label);
-                for(int j = 0; j < cells[0].length; j++){
-                    row.getChildren().add(cells[i][j].getTextField());
+
+                List<Cell> cellList = spreadsheet.getCells().get(i);
+                for (Cell cell : cellList) {
+                    row.getChildren().add(cell.getTextField());
                 }
             }else{
-                int width = (int) cells[0][0].getTextField().getPrefWidth();
+                int width = (int) cells.get(0).get(0).getTextField().getPrefWidth();
 
-                for(int j = 0; j < cells[0].length; j++){
+                for(int j = 0; j < cells.get(0).size(); j++){
                     Label label = new Label(Spreadsheet.toLiteral(j));
                     label.setMinWidth(width);
                     row.getChildren().add(label);

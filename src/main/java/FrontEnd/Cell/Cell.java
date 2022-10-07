@@ -7,27 +7,12 @@ import javafx.scene.control.TextField;
 public class Cell {
     private String dataValue;
     private String dataFormula;
-    private TextField textField;
+    private final TextField textField;
     private TextField formulaView;
+
     private Spreadsheet spreadsheet;
-
-    public void recalculate(){
-        Cell[][] cells = spreadsheet.getCells();
-
-        Parser parser = new Parser(new Lexer(), spreadsheet);
-        for(int i = 0; i < cells.length; i++){
-            for(int j = 0; j < cells[0].length; j++){
-                if(!cells[i][j].getDataFormula().equals("")){
-                    cells[i][j].setDataValue(String.valueOf(parser.evaluate(cells[i][j].getDataFormula())));
-                    TextField temp = cells[i][j].getTextField();
-                    temp.setText(cells[i][j].getValue());
-                }
-            }
-        }
-    }
-
-    public Cell(TextField formulaView, Spreadsheet parent){
-        spreadsheet = parent;
+    public Cell(TextField formulaView, Spreadsheet spreadsheet){
+        this.spreadsheet = spreadsheet;
         this.formulaView = formulaView;
         dataValue = "";
         dataFormula = "";
@@ -44,8 +29,6 @@ public class Cell {
             System.out.println("Formula: " + dataFormula);
             System.out.println("Value: " + dataValue);
             textField.setText(dataValue);
-
-            recalculate();
         });
 
         textField.setOnMouseClicked(e -> {

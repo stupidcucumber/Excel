@@ -1,20 +1,18 @@
 package BackEnd.Parser;
 
+import FrontEnd.Cell.Cell;
 import FrontEnd.Cell.Spreadsheet;
 
 import java.util.List;
 
 public class Parser {
     private Lexer lexer;
-    private Spreadsheet spreadsheet;
     private int pointer;
+
+    Spreadsheet spreadsheet;
 
     public Parser(){
         pointer = 0;
-    }
-
-    public Parser(Lexer lexer){
-        this.lexer = lexer;
     }
 
     public Parser(Lexer lexer, Spreadsheet spreadsheet){
@@ -85,6 +83,11 @@ public class Parser {
         return priorityChanger();
     }
 
+    public double calculateCell(Cell cell){
+        Parser parser = new Parser(new Lexer(), spreadsheet);
+        return parser.evaluate(cell.getDataFormula());
+    }
+
     public double priorityChanger(){
         Token token = lexer.getToken(pointer);
 
@@ -105,15 +108,10 @@ public class Parser {
         }else if(token.getTokenType() == TokenType.CELL){
             pointer++;
             System.out.println(lexer);
-            return getCellValue(token.getExpression());
+            return calculateCell(spreadsheet.getCell(token.getExpression()));
         }else{
             System.out.println(lexer);
                 throw new RuntimeException("Expression is invalid! " + token.getTokenType());
         }
-    }
-
-    public double getCellValue(String cell){
-        Parser tempParser = new Parser(new Lexer(), spreadsheet);
-        return tempParser.evaluate(spreadsheet.getCell(cell).getDataFormula());
     }
 }

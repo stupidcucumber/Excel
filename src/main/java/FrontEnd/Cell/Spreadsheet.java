@@ -2,7 +2,6 @@ package FrontEnd.Cell;
 
 import javafx.scene.control.TextField;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -10,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class Spreadsheet {
     private final int DEFAULT_WIDTH = 10, DEFAULT_HEIGHT = 10;
-    private List<List<Cell>> cells;
+    private final List<List<Cell>> cells;
     private int width;
     private int height;
     private String name;
@@ -20,6 +19,7 @@ public class Spreadsheet {
     public Spreadsheet(String name, TextField formulaViewer){
         height = DEFAULT_HEIGHT;
         width = DEFAULT_WIDTH;
+        Cell.setSpreadsheet(this);
         cells = new ArrayList<>();
         this.formulaViewer = formulaViewer;
         this.name = name;
@@ -27,16 +27,12 @@ public class Spreadsheet {
         for(int i = 0; i < DEFAULT_HEIGHT; i++){
             List<Cell> cellList = new ArrayList<>();
             for(int j = 0; j < DEFAULT_WIDTH; j++){
-                Cell cell = new Cell(formulaViewer, this);
+                Cell cell = new Cell();
                 cellList.add(cell);
             }
 
             cells.add(cellList);
         }
-    }
-
-    public Spreadsheet(File file){
-
     }
 
     public String getName(){
@@ -60,7 +56,7 @@ public class Spreadsheet {
     public Cell getCell(String cell){
         Cell currentCell = null;
 
-        Pattern literalPart = Pattern.compile("[A-B]*");
+        Pattern literalPart = Pattern.compile("[A-Z]*");
         Pattern digitPart = Pattern.compile("\\d+");
 
         Matcher literal = literalPart.matcher(cell);
@@ -105,10 +101,6 @@ public class Spreadsheet {
         return cells;
     }
 
-    public void recalculate(){
-
-    }
-
     public int getWidth(){
         return width;
     }
@@ -123,5 +115,13 @@ public class Spreadsheet {
 
     public void setHeight(int height){
         this.height = height;
+    }
+
+    public TextField getFormulaViewer() {
+        return formulaViewer;
+    }
+
+    public void setFormulaViewer(TextField formulaViewer) {
+        this.formulaViewer = formulaViewer;
     }
 }

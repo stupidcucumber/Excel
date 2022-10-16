@@ -1,5 +1,7 @@
 package BackEnd.Parser;
 
+import java.util.Objects;
+
 public class Token {
     private TokenType tokenType;
     private String expression;
@@ -38,5 +40,18 @@ public class Token {
     @Override
     public String toString(){
         return expression + "/" + tokenType.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Token token = (Token) o;
+        return tokenType == token.tokenType && Objects.equals(expression, token.expression);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tokenType, expression);
     }
 }

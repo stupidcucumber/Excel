@@ -2,17 +2,12 @@ package BackEnd.Parser;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class Lexer {
-    private List<Token> tokens = new ArrayList<>();
+    private final List<Token> tokens = new ArrayList<>();
     private Token currentToken;
-    //private Pattern cell_pattern = Pattern.compile("[A-B]+");
-    public Lexer(){
 
-    }
-
-    private void divideToUT(String expression){ // Divide to undefined tokens
+    private void divideToUT(String expression){
 
         if(!tokens.isEmpty())
             tokens.clear();
@@ -90,7 +85,7 @@ public class Lexer {
                 throw new RuntimeException("Unknown expression!");
         }
     }
-    public List<Token> defineTokens(){
+    public void defineTokens(){
         for (Token token : tokens) {
             if (token.getTokenType() == TokenType.OPERATOR) {
                 defineTokenOperator(token);
@@ -98,8 +93,6 @@ public class Lexer {
                 defineTokenCharacter(token);
             }
         }
-
-        return tokens;
     }
     public void consumeExpression(String expression){
             divideToUT(expression);

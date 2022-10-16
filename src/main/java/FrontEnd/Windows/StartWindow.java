@@ -9,6 +9,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 
 public class StartWindow {
     public static Stage window;
@@ -24,15 +25,29 @@ public class StartWindow {
 
         newFile.setStyle("-fx-graphic: url(new-file-big.png);-fx-content-display: bottom;");
         newFile.setOnAction(e -> {
-           MainWindow.launch(new File("new_file.csv"));
-           window.close();
+            boolean created = false;
+            try {
+                String fileName = CreatingNewWindow.launch();
+                if(!fileName.equals("")){
+                    MainWindow.launch(new File(fileName + ".csv"), false);
+                    created = true;
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            if(created)
+                window.close();
         });
 
         openFile.setStyle("-fx-graphic: url(documents-folder-big.png);-fx-content-display: bottom;");
         openFile.setOnAction(e -> {
             File file = fileChooser.showOpenDialog(window);
             if(file != null){
-                MainWindow.launch(file);
+                try {
+                    MainWindow.launch(file, true);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
                 window.close();
             }
         });

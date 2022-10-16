@@ -1,7 +1,7 @@
 module com.example.excel {
     requires javafx.controls;
     requires javafx.fxml;
-    requires antlr;
+    requires opencsv;
 
 
     opens com.example.excel to javafx.fxml;
